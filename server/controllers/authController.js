@@ -75,8 +75,61 @@ const getMe = async (req, res) => {
   res.status(200).json(req.user);
 };
 
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private/Admin
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password');
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while fetching users' });
+  }
+};
+
+// @desc    Authenticate or register a user via Google
+// @route   POST /api/auth/google-login
+// @access  Public
+const googleLogin = async (req, res) => {
+  const { email, name } = req.body;
+
+  if (!email || !name) {
+    return res.status(400).json({ message: 'Missing email or name from Google' });
+  }
+
+  try {
+    // Find user by email
+    let user = await User.findOne({ email });
+
+    // If user does not exist, register them automatically
+    if (!user) {
+      // Generate a secure random password since password is required by schema
+      const randomPassword = Math.random().toString(36).slice(-10) + 'A1!';
+      user = await User.create({
+        name,
+        email,
+        password: randomPassword,
+        role: 'user', // Default role for new signups
+      });
+    }
+
+    res.status(200).json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Google login failed on server' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getAllUsers,
+  googleLogin,
 };
+

@@ -45,13 +45,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (email, name) => {
+    try {
+      const { data } = await API.post('/api/auth/google-login', { email, name });
+      setUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Google login failed',
+      };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, googleLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

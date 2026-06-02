@@ -7,26 +7,33 @@ const materialSchema = new mongoose.Schema(
       required: [true, 'Please add a title'],
       trim: true,
     },
+
     description: {
       type: String,
       required: [true, 'Please add a description'],
     },
+
     fileUrl: {
       type: String,
       default: '',
     },
+
     youtubeUrl: {
       type: String,
       default: '',
     },
+
     type: {
       type: String,
       required: [true, 'Please specify material type (file or youtube)'],
       enum: ['file', 'youtube'],
     },
+
     fileType: {
-      type: String, // pdf, docx, etc.
+      type: String, // pdf, docx, ppt, etc.
+      default: '',
     },
+
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -89,7 +90,18 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-10 text-center">
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200"></div>
+          </div>
+          <div className="relative flex justify-center text-xs font-semibold uppercase">
+            <span className="bg-white/90 px-3 text-slate-500 rounded-full">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleLoginButton />
+
+        <div className="mt-8 text-center">
           <p className="text-slate-600 font-medium">
             Don't have an account?{' '}
             <Link to="/register" className="text-primary-600 font-bold hover:text-primary-700 transition-colors hover:underline underline-offset-4">

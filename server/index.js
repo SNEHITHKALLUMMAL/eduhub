@@ -33,6 +33,19 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/materials', require('./routes/materialRoutes'));
 
+// Serve frontend in production (only if explicitly enabled and dist directory exists)
+if (process.env.NODE_ENV === 'production' && process.env.SERVE_FRONTEND === 'true' && fs.existsSync(path.join(__dirname, '../client/dist'))) {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, '../', 'client', 'dist', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('EduHub API is running...');
+  });
+}
+
 // Error handler
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
